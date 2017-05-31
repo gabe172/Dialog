@@ -1,0 +1,55 @@
+#!/bin/bash
+      2 
+      3 AIP(){
+      4 IP=$(dialog                                             \
+      5 --nocancel                                              \
+      6 --stdout                                                \
+      7 --title 'Adicionar IP'                                  \
+      8 --inputbox 'Digite o IP desejado (incluindo a faixa) ou aperte (2X) ESC         voltar' \
+      9 0 0                                                     )
+     10 if [ $? = 0 ]; then
+     11          ip addr add $IP dev eth0 && GRED
+     12 else
+     13         GRED
+     14 fi
+     15 }
+     16 
+     17 RIP(){
+     18 IPR=$(dialog --stdout --title "Remover IP" --yes-label 'Sim' --no-label         'Não' --yesno "Quer mesmo remover tudo?" 0 0)
+     19         if [ $? = 1 ]; then
+     20                 GRED
+     21         else
+     22                 ip addr flush dev eth0 && GRED
+     23         fi
+     24 }
+     25 
+     26 RES(){
+     27 OPC=$(dialog --stdout --title "Restart" --yes-label 'Sim' --no-label 'N        ão' --yesno "Quer mesmo reestartar a placa de rede?" 0 0)
+     28         if [ $? = 0 ]; then
+     29         echo -n "/etc/init.d/networking restart" && dialog --msgbox 'A         placa foi reestartada com sucesso' 0 0 && GRED
+     30         else
+     31                 GRED
+     32         fi
+     33 }
+     34 
+     35 GRED(){
+     36 OPC=$(dialog                                    \
+     37 --cancel-label 'Voltar'                         \
+     38 --stdout                                        \
+     39 --title 'Gerenciamento de Redes'                \
+     40 --menu 'Escolha a opção desejada:'              \
+     41 0 0 0                                           \
+     42         1 'Adicionar IP'                        \
+     43         2 'Remover IP'                          \
+     44         3 'Restart na Placa de Rede'            )
+     45 
+     46 case $OPC in
+     47         1)AIP   ;;
+     48         2)RIP   ;;
+     49         3)RES   ;;
+     50         *) cd /home/vagrant/ && ./Menu.sh ;;
+     51 esac
+     52 }
+     53 GRED
+     54 
+
